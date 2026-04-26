@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn AI Comment Generator",
+  "version": "1.0",
+  "description": "Generates AI comments for LinkedIn posts using Gemini.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://*.linkedin.com/*", "https://generativelanguage.googleapis.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.linkedin.com/*"],
+      "css": ["styles.css"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_icon": "icon.png",
+    "default_title": "Settings",
+    "default_popup": "options.html"
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}
