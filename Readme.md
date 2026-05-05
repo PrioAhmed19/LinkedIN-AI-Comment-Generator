@@ -33,7 +33,7 @@ A Chrome extension that adds a one-click **✨ AI Comment** button to every Link
 
 **Option A — Clone this repo:**
 ```bash
-git clone https://github.com/YOUR_USERNAME/linkedin-ai-comment-generator.git
+git clone https://github.com/PrioAhmed19/linkedin-ai-comment-generator.git
 ```
 
 **Option B — Download ZIP:**
@@ -65,7 +65,7 @@ The extension icon will appear in your Chrome toolbar.
 
 1. Go to [linkedin.com](https://www.linkedin.com) and find any post in your feed
 2. Click **Comment** to open the comment box
-3. Click the **✨ AI Comment** button that appears below the text box
+3. Click the **AI Comment** button that appears below the text box
 4. Wait ~2–3 seconds for Gemini to generate a comment
 5. Review the text (edit if you like), then click **Post**
 
@@ -106,7 +106,7 @@ linkedin-ai-comment-generator/
 ## ⚙️ How it works
 
 1. **`content.js`** runs on every LinkedIn page and uses a `MutationObserver` to detect when comment boxes appear (LinkedIn is a Single Page App, so boxes are created dynamically)
-2. When a comment box is found, it injects the **✨ AI Comment** button below it
+2. When a comment box is found, it injects the **AI Comment** button below it
 3. On click, it scrapes the post's author, text, and up to 10 existing comments from the DOM
 4. It sends this context to **`background.js`** via `chrome.runtime.sendMessage`
 5. **`background.js`** builds a prompt and calls the **Gemini REST API** directly
