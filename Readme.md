@@ -33,7 +33,7 @@ A Chrome extension that adds a one-click **✨ AI Comment** button to every Link
 
 **Option A — Clone this repo:**
 ```bash
-git clone https://github.com/PrioAhmed/linkedin-ai-comment-generator.git
+git clone https://github.com/YOUR_USERNAME/linkedin-ai-comment-generator.git
 ```
 
 **Option B — Download ZIP:**
@@ -151,3 +151,8 @@ Pull requests are welcome! Some ideas for improvements:
 ## 📄 License
 
 MIT License — feel free to use, modify, and distribute.
+
+
+##Credit
+
+All the credits goes to Factoryze.tech

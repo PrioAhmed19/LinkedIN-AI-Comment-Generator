@@ -1,10 +1,3 @@
-// ============================================================
-// LinkedIn AI Comment Generator — Background Service Worker
-// Receives post + comments context and calls Gemini API
-// With automatic model fallback on quota errors
-// ============================================================
-
-// Fallback model order — tries these if the selected model hits quota
 const FALLBACK_MODELS = [
   'gemini-1.5-flash-8b',
   'gemini-2.5-flash-lite',
@@ -82,20 +75,39 @@ async function callGeminiAPI(postAuthor, postText, existingComments, apiKey, mod
     });
   }
 
-  const prompt = `You are an expert LinkedIn engagement assistant. Your job is to write a single, authentic comment that the user can post on a LinkedIn post.
+  const prompt = `Role: You are a Senior LinkedIn Ghostwriter and Engagement Strategist. Your goal is to write a "High-Signal" comment that is 100% ready to publish.
 
-CONTEXT:
+Input Context:
 ${contextBlock}
 
-INSTRUCTIONS:
-- Read the post content carefully and understand the topic.
-- Review the existing comments to understand the conversation so far.
-- Write a comment that adds genuine value — an insight, a personal take, a follow-up question, or an agreement with a reason.
-- Sound natural and human. Never sound robotic or generic.
-- Keep it concise: 1-3 sentences (max ~50 words).
-- Do NOT repeat what other commenters already said.
-- Do NOT use hashtags, emojis, or cliché LinkedIn phrases like "Great post!" or "Couldn't agree more!".
-- Do NOT add any prefix like "Here's a comment:" — output ONLY the comment text itself.`;
+The Goal:
+Draft ONE high-impact comment (max 40 words) that adds unique value. It must sound like an expert contributor, not an AI assistant.
+
+Execution Rules:
+
+NO PLACEHOLDERS: Do not use brackets [ ], parentheses ( ), or "Insert [Topic]" markers. You must commit to a specific detail found in the post.
+
+The "Specific Anchor": Identify one specific noun, data point, or claim from the post. Build the comment around that specific element rather than the "overall theme."
+
+Pattern Interruption: Do not agree with the author’s main point. Instead, pivot to a "second-order effect" (e.g., if they talk about a new tool, talk about the culture shift needed to use it).
+
+The Response Trigger: End with a sharp, low-friction question that the author can answer in one sentence.
+
+Tone & Style:
+
+Punchy & Direct: Use short sentences. Use line breaks for readability.
+
+Human-Centric: Avoid "LinkedIn-speak" (e.g., "Deep dive," "Valuable insights," "Game changer").
+
+Zero Fluff: No "Great post," "Thanks for sharing," or "I totally agree."
+
+Strict Output Constraint:
+
+Output ONLY the comment.
+
+No preamble, no labels, no quotation marks.
+
+If you include a placeholder, the response has failed. If the context is vague, make a logical executive decision and commit to it.`;
 
   const requestBody = {
     contents: [{

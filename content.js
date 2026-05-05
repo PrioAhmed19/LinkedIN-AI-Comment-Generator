@@ -1,10 +1,6 @@
-// ============================================================
-// LinkedIn AI Comment Generator — Content Script
-// ============================================================
-
 console.log('[AI Comment Generator] Content script loaded on:', window.location.href);
 
-// ── Toast (replaces alert()) ─────────────────────────────────────────────────
+// ── Toast ───────────────────────────────────────────────────────────────────
 
 function showToast(message, type = 'info') {
   let toast = document.getElementById('ai-gen-toast');
@@ -22,7 +18,7 @@ function showToast(message, type = 'info') {
   }, 3800);
 }
 
-// ── Scrape post data ─────────────────────────────────────────────────────────
+// ── Scrape post data ────────────────────────────────────────────────────────
 
 function scrapePostData(anchorElement) {
   const postContainer = anchorElement.closest('[data-urn]')
@@ -87,7 +83,7 @@ function scrapePostData(anchorElement) {
   return { postAuthor, postText, existingComments };
 }
 
-// ── Find comment boxes ───────────────────────────────────────────────────────
+// ── Find comment boxes ──────────────────────────────────────────────────────
 
 function findCommentBoxes() {
   const results = new Set();
@@ -118,7 +114,7 @@ function findCommentBoxes() {
   return Array.from(results);
 }
 
-// ── Insert generated text into LinkedIn's editor ─────────────────────────────
+// ── Insert generated text ───────────────────────────────────────────────────
 
 function insertTextAtCursor(element, text) {
   element.focus();
@@ -140,27 +136,24 @@ function insertTextAtCursor(element, text) {
   }, 100);
 }
 
-// ── Inject buttons ───────────────────────────────────────────────────────────
+// ── Inject buttons ──────────────────────────────────────────────────────────
 
 function injectButton() {
   const commentBoxes = findCommentBoxes();
   console.log(`[AI Comment Generator] Found ${commentBoxes.length} comment box(es)`);
 
   commentBoxes.forEach(box => {
-    // Guard: skip if already injected on this box
     if (box.dataset.aiInjected === 'true') return;
 
-    // Guard: skip if a button wrapper already exists nearby
     const wrapper = box.parentElement;
     if (!wrapper) return;
     if (wrapper.parentElement && wrapper.parentElement.querySelector('.ai-comment-btn-wrapper')) return;
 
     box.dataset.aiInjected = 'true';
 
-    // Build the button
     const btn = document.createElement('button');
     btn.className = 'ai-comment-btn';
-    btn.innerHTML = '✨ AI Comment';
+    btn.innerHTML = 'AI Comment';
     btn.type = 'button';
 
     btn.addEventListener('click', async (e) => {
@@ -168,10 +161,9 @@ function injectButton() {
       e.stopPropagation();
 
       const { postAuthor, postText, existingComments } = scrapePostData(box);
-      console.log('[AI Comment Generator] Scraped context:', { postAuthor, postText: postText.substring(0, 100), commentsCount: existingComments.length });
 
       const originalHTML = btn.innerHTML;
-      btn.innerHTML = '⌛ Generating...';
+      btn.innerHTML = 'Generating...';
       btn.classList.add('loading');
       btn.disabled = true;
 
@@ -186,27 +178,25 @@ function injectButton() {
         btn.disabled = false;
 
         if (chrome.runtime.lastError) {
-          console.error('[AI Comment Generator]', chrome.runtime.lastError);
-          showToast('❌ ' + chrome.runtime.lastError.message, 'error');
+          showToast(chrome.runtime.lastError.message, 'error');
           return;
         }
         if (!response) {
-          showToast('❌ Background script did not respond. Reload the extension.', 'error');
+          showToast('Background script did not respond. Reload the extension.', 'error');
           return;
         }
         if (response.error) {
-          showToast('❌ ' + response.error, 'error');
+          showToast(response.error, 'error');
           return;
         }
         if (response.comment) {
           insertTextAtCursor(box, response.comment);
           const note = response.fallback ? ` (via ${response.model})` : '';
-          showToast('✅ Comment generated' + note, 'success');
+          showToast('Comment generated' + note, 'success');
         }
       });
     });
 
-    // Place the button in a wrapper div after the editor's parent
     const btnContainer = document.createElement('div');
     btnContainer.className = 'ai-comment-btn-wrapper';
     btnContainer.appendChild(btn);
@@ -219,7 +209,7 @@ function injectButton() {
   });
 }
 
-// ── MutationObserver — LinkedIn is a SPA ────────────────────────────────────
+// ── Observer ────────────────────────────────────────────────────────────────
 
 let debounceTimer = null;
 const observer = new MutationObserver(() => {
@@ -229,7 +219,6 @@ const observer = new MutationObserver(() => {
 
 observer.observe(document.body, { childList: true, subtree: true });
 
-// Staggered initial scans for reliability
 setTimeout(injectButton, 1500);
 setTimeout(injectButton, 4000);
 setTimeout(injectButton, 9000);
